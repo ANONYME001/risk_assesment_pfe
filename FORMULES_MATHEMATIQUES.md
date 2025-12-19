@@ -542,6 +542,354 @@ $$\text{Émissions} = 0.162 (\text{directes}) + 0.048 (\text{amortissement+maint
 
 ---
 
+---
+
+## 📊 Théorie des Probabilités et Incertitudes
+
+### Concept Fondamental : Probabilité et Variabilité des Émissions
+
+Les facteurs d'émission ne sont pas constants. Chaque mesure comporte une **incertitude naturelle** liée à:
+- Variabilité des compositions énergétiques
+- Paramètres environnementaux changeants
+- Erreurs de mesure et approximations
+
+$$P(\text{Émissions réelles} \in [\mu - \sigma, \mu + \sigma]) = 68.3\%$$
+
+**Où:**
+- $\mu$ = facteur d'émission moyen
+- $\sigma$ = écart-type (incertitude)
+
+### Distribution Normale des Facteurs d'Émission
+
+**Exemple électricité France 2024:**
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+
+**Paramètres estimés:**
+```
+Facteur moyen:        μ = 0.042 kg CO₂e/kWh
+Écart-type:           σ = 0.008 kg CO₂e/kWh (±19%)
+
+Fourchette 95% (2σ):  [0.026 ; 0.058] kg CO₂e/kWh
+```
+
+**Interprétation:**
+- 68% des valeurs: 0.034 à 0.050 kg CO₂e/kWh
+- 95% des valeurs: 0.026 à 0.058 kg CO₂e/kWh
+- 99.7% des valeurs: 0.018 à 0.066 kg CO₂e/kWh
+
+### Probabilité Composée : Plusieurs Sources d'Émission
+
+**Entreprise avec 3 sources indépendantes:**
+1. Électricité
+2. Gaz naturel
+3. Déchets
+
+$$P(\text{Total émissions}) = P(E) \times P(G) \times P(D)$$
+
+**Si chaque source a 95% de confiance (1.96σ):**
+
+$$P(\text{Ensemble valide}) = 0.95^3 = 0.857 = 85.7\%$$
+
+**Interprétation:** Avec 3 sources, la certitude globale diminue de 95% à 86%
+
+### Théorème de Bayes : Mise à Jour des Facteurs
+
+Quand on obtient une **mesure nouvelle**, on met à jour la probabilité:
+
+$$P(\text{Facteur} \mid \text{Mesure}) = \frac{P(\text{Mesure} \mid \text{Facteur}) \times P(\text{Facteur})}{P(\text{Mesure})}$$
+
+**Exemple pratique:**
+- **Hypothèse:** Facteur électricité = 0.042 kg CO₂e/kWh (croyance initiale)
+- **Observation:** On mesure consommation réelle de 1000 kWh
+
+Avant mesure (prior): $P(\text{Facteur}) = N(0.042, 0.008)$
+
+Après mesure: On affine notre estimation avec les données réelles
+
+### Analyse d'Incertitude : Propagation des Erreurs
+
+Pour une formule composite:
+$$\text{Émissions} = A \times F$$
+
+Où $A$ = quantité d'activité, $F$ = facteur d'émission
+
+**Erreur totale relative:**
+$$\frac{\Delta E}{E} = \sqrt{\left(\frac{\Delta A}{A}\right)^2 + \left(\frac{\Delta F}{F}\right)^2}$$
+
+**Exemple voiture essence:**
+```
+Consommation: 7 L/100 km (±10% → Δ = 0.7 L)
+Facteur essence: 2.31 kg CO₂/L (±5% → Δ = 0.115)
+
+ΔE/E = √((0.10)² + (0.05)²) = √(0.01 + 0.0025)
+     = √0.0125 = 0.1118 = 11.18%
+
+→ Résultat: 0.162 ± 0.018 kg CO₂e/km (±11%)
+```
+
+### Distribution des Émissions d'une Entreprise
+
+Pour 100 réplications de mesures d'une PME:
+
+$$\text{Émissions annuelles} \sim N(\mu_{\text{total}}, \sigma_{\text{total}})$$
+
+**Où:**
+$$\mu_{\text{total}} = \sum_i \mu_i \text{ (somme des moyennes)}$$
+
+$$\sigma_{\text{total}} = \sqrt{\sum_i \sigma_i^2} \text{ (somme quadratique des variances)}$$
+
+**Exemple: PME avec 3 activités**
+```
+Activité              Moyenne      Écart-type
+─────────────────────────────────────────
+Électricité (tCO₂e)   50          8
+Gaz naturel (tCO₂e)   30          6
+Déchets (tCO₂e)       5           1.5
+
+Émissions totales:
+μ_total = 50 + 30 + 5 = 85 tCO₂e
+σ_total = √(64 + 36 + 2.25) = √102.25 = 10.1 tCO₂e
+
+→ Intervalle 95%: [85 - 1.96×10.1 ; 85 + 1.96×10.1]
+                 = [65.2 ; 104.8] tCO₂e
+```
+
+### Intervalle de Confiance pour Prévisions
+
+Pour prédire les émissions d'une année future:
+
+$$IC_{95\%} = \bar{x} \pm t_{\alpha/2, n-1} \times \frac{s}{\sqrt{n}}$$
+
+**Paramètres:**
+- $\bar{x}$ = moyenne observée
+- $t_{\alpha/2, n-1}$ = t-test critique (pour α=0.05)
+- $s$ = écart-type échantillon
+- $n$ = nombre d'observations historiques
+
+**Exemple historique 5 ans:**
+```
+Émissions annuelles observées (tCO₂e):
+2020: 78
+2021: 82
+2022: 85
+2023: 88
+2024: 90
+
+Statistiques:
+Moyenne (x̄) = 84.6 tCO₂e
+Écart-type (s) = 5.28 tCO₂e
+n = 5
+t₀.₀₂₅,₄ = 2.776
+
+IC = 84.6 ± 2.776 × (5.28/√5)
+   = 84.6 ± 2.776 × 2.36
+   = 84.6 ± 6.56
+   = [78.0 ; 91.2] tCO₂e (95% confiance)
+```
+
+---
+
+## 📈 Régression Linéaire et Prévisions
+
+### Modèle Linéaire Simple
+
+La relation entre une **variable indépendante** (X) et les **émissions** (Y):
+
+$$Y = \beta_0 + \beta_1 X + \epsilon$$
+
+**Où:**
+- $Y$ = Émissions (kg CO₂e)
+- $X$ = Variable explicative (ex: kWh, heures activité)
+- $\beta_0$ = Ordonnée à l'origine (émissions de base)
+- $\beta_1$ = Pente (émissions par unité d'activité)
+- $\epsilon$ = Erreur résiduelle
+
+### Estimation des Coefficients (Moindres Carrés)
+
+Pour minimiser l'écart entre réalité et modèle:
+
+$$\min \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+
+**Formules:**
+
+$$\beta_1 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)}$$
+
+$$\beta_0 = \bar{y} - \beta_1 \bar{x}$$
+
+**Exemple: Émissions vs Consommation d'Électricité**
+
+```
+Données mensuelles (12 mois):
+Mois    Électricité (kWh)    Émissions (kg CO₂e)
+1       5,000                210
+2       5,200                219
+3       4,800                202
+...
+12      6,100                257
+
+Calculs intermédiaires:
+Σx = 62,400 kWh (consommation totale)
+Σy = 2,625 kg CO₂e (émissions totales)
+x̄ = 5,200 kWh
+ȳ = 218.75 kg CO₂e
+
+Σ(xᵢ - x̄)² = 1,920,000
+Σ(xᵢ - x̄)(yᵢ - ȳ) = 80,500
+
+β₁ = 80,500 / 1,920,000 = 0.04193 kg CO₂e/kWh
+β₀ = 218.75 - 0.04193 × 5,200 = 19.67 kg CO₂e
+
+Modèle: Émissions = 19.67 + 0.04193 × kWh
+```
+
+### Coefficient de Détermination (R²)
+
+Mesure de la **qualité du modèle** (proportion de variance expliquée):
+
+$$R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2} = \frac{\text{Variance expliquée}}{\text{Variance totale}}$$
+
+**Interprétation:**
+```
+R² = 0.95 (95%):  Excellent - Modèle très fiable ✅
+R² = 0.80 (80%):  Bon - Modèle fiable
+R² = 0.60 (60%):  Moyen - À améliorer
+R² = 0.40 (40%):  Faible - Vérifier les données
+R² < 0.30:        Très mauvais - Relation linéaire douteuse ❌
+```
+
+**Exemple - Électricité:**
+```
+Variance totale Σ(yᵢ - ȳ)² = 1,256
+Variance résiduelle Σ(yᵢ - ŷᵢ)² = 62.8
+
+R² = 1 - (62.8 / 1,256) = 1 - 0.050 = 0.950 = 95% ✅
+
+→ Le modèle explique 95% de la variation des émissions
+```
+
+### Erreur Standard et Significativité
+
+**Erreur standard de la pente:**
+
+$$SE(\beta_1) = \sqrt{\frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{(n-2) \sum_{i=1}^{n} (x_i - \bar{x})^2}}$$
+
+**Test t de significativité:**
+
+$$t = \frac{\beta_1}{SE(\beta_1)}$$
+
+Si $|t| > t_{0.025, n-2}$ → Le coefficient est **statistiquement significatif** ✅
+
+**Exemple:**
+```
+β₁ = 0.04193
+SE(β₁) = 0.00215
+
+t = 0.04193 / 0.00215 = 19.5
+
+Pour n=12, t₀.₀₂₅,₁₀ = 2.228
+
+19.5 > 2.228 → β₁ est hautement significatif (p < 0.001) ✅
+```
+
+### Régression Linéaire Multiples
+
+Quand plusieurs variables influencent les émissions:
+
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + ... + \epsilon$$
+
+**Exemple pour une PME:**
+
+```
+Émissions = β₀ + β₁(kWh électricité) + β₂(m³ gaz) 
+            + β₃(tonnes déchets) + ε
+
+Résultats estimés:
+Émissions = 45 + 0.042×kWh + 1.96×m³ + 0.37×tonnes + ε
+
+Interprétation:
+- Chaque kWh d'électricité ajoute 0.042 kg CO₂e
+- Chaque m³ de gaz ajoute 1.96 kg CO₂e
+- Chaque tonne de déchet ajoute 370 kg CO₂e
+- 45 kg CO₂e = émissions de base (non-activité)
+```
+
+### Prévision avec Régression
+
+Une fois le modèle calibré, on peut prédire:
+
+$$\hat{Y} = \beta_0 + \beta_1 X_{\text{nouveau}}$$
+
+**Avec intervalle de prédiction 95%:**
+
+$$IC = \hat{Y} \pm t_{\alpha/2} \times SE(\hat{Y})$$
+
+Où:
+$$SE(\hat{Y}) = s \sqrt{1 + \frac{1}{n} + \frac{(X_{\text{nouveau}} - \bar{X})^2}{\sum(X_i - \bar{X})^2}}$$
+
+**Exemple - Prévision émissions:**
+```
+Consommation prévue janvier prochain: 5,500 kWh
+
+Prédiction ponctuelle:
+Ŷ = 19.67 + 0.04193 × 5,500 = 250.35 kg CO₂e
+
+Erreur standard (exemple):
+SE(Ŷ) = 8.3 kg CO₂e
+t₀.₀₂₅,₁₀ = 2.228
+
+Intervalle 95%:
+IC = 250.35 ± 2.228 × 8.3 = 250.35 ± 18.49
+   = [231.9 ; 268.8] kg CO₂e
+```
+
+### Diagnostic du Modèle Linéaire
+
+**Hypothèses à vérifier:**
+
+1. **Linéarité:** Relation réelle Y vs X est linéaire
+   - Visualiser nuage de points + droite régression
+   
+2. **Normalité des résidus:** $\epsilon \sim N(0, \sigma^2)$
+   - Test Q-Q plot ou Shapiro-Wilk
+   
+3. **Homoscédasticité:** Variance résiduelle constante
+   - Plot résidus vs valeurs ajustées
+   
+4. **Indépendance:** Les résidus non corrélés
+   - Test Durbin-Watson
+
+**Graphique diagnostic clé - Résidus vs Valeurs Ajustées:**
+```
+Bon modèle:           Mauvais modèle:
+         
+  •  •  •              • •  •
+  • •  •  •            • •••••
+    •  •  •              •  •
+   • • •  •             ••• •
+
+→ Pas de pattern    → Pattern visible (pb linéarité)
+  (homoscédasticité)  (hétéroscédasticité)
+```
+
+### Amélioration du Modèle
+
+**Si R² faible ou résidus non-normaux:**
+
+1. **Ajouter variables:** Régression multiple
+   $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + ...$$
+
+2. **Transformer variables:** Utiliser log ou racine carrée
+   $$\ln(Y) = \beta_0 + \beta_1 \ln(X)$$
+   
+3. **Interaction:** Considérer effet combiné
+   $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3(X_1 \times X_2)$$
+
+4. **Non-linéaire:** Polynôme ou spline
+   $$Y = \beta_0 + \beta_1 X + \beta_2 X^2 + \beta_3 X^3$$
+
+---
+
 ## 🎓 Conclusion Mathématique
 
 Tous les coefficients dérivent de:
@@ -551,9 +899,21 @@ Tous les coefficients dérivent de:
 4. **Analyse cycle de vie** (ressources, transport, fin de vie)
 5. **Marges de sécurité** (incertitudes ±5-20%)
 
+**Probabilités et Statistiques** permettent de:
+- Quantifier l'incertitude des mesures
+- Construire des intervalles de confiance
+- Évaluer la validité des prédictions
+
+**Régression Linéaire** permet de:
+- Établir relations quantitatives entre activité et émissions
+- Prédire émissions futures basées sur données historiques
+- Identifier les facteurs les plus influents
+- Évaluer la qualité prédictive du modèle
+
 La précision dépend de:
 - ✅ Qualité données entrée (quantités activités)
 - ✅ Applicabilité régionale (mix électrique local)
 - ✅ Spécificité contextuelle (type équipement, durée de vie)
+- ✅ Taille échantillon historique (pour régression)
 - ⚠️ Évolution technologique (rendements améliorés)
 
