@@ -552,6 +552,336 @@ Les facteurs d'émission ne sont pas constants. Chaque mesure comporte une **inc
 - Variabilité des compositions énergétiques
 - Paramètres environnementaux changeants
 - Erreurs de mesure et approximations
+- Fluctuations saisonnières et opérationnelles
+
+### Variables Aléatoires et Probabilité
+
+Une variable aléatoire $X$ représente une grandeur incertaine. Pour les émissions:
+
+$$X \sim \text{Distribution de probabilité}$$
+
+**Types de distributions utilisées:**
+- **Distribution Normale:** Phénomènes naturels (électricité, gaz)
+- **Distribution Uniforme:** Imprécision d'intervalle
+- **Distribution Lognormale:** Données asymétriques (déchets)
+
+### Probabilité Cumulative et Densité
+
+La **fonction de densité de probabilité** (PDF) donne la probabilité d'une valeur:
+
+$$P(a \leq X \leq b) = \int_a^b f(x) dx$$
+
+**Exemple - Facteur électricité France:**
+```
+P(0.035 ≤ facteur ≤ 0.050) = ∫₀.₀₃₅⁰·⁰⁵⁰ f(x) dx
+```
+
+### Espérance Mathématique (Valeur Moyenne)
+
+Pour une variable continue:
+
+$$E[X] = \mu = \int_{-\infty}^{\infty} x \cdot f(x) dx$$
+
+Pour données discrètes:
+$$E[X] = \sum_{i=1}^n p_i \cdot x_i$$
+
+**Exemple - Consommation électrique mensuelle:**
+```
+Valeurs observées: 5000, 5200, 4800, 5500, 4900 kWh
+Probabilités égales: p_i = 1/5 = 0.2
+
+E[X] = 0.2×5000 + 0.2×5200 + 0.2×4800 + 0.2×5500 + 0.2×4900
+     = 1000 + 1040 + 960 + 1100 + 980
+     = 5080 kWh
+```
+
+### Variance et Écart-type
+
+La **variance** mesure la dispersion autour de la moyenne:
+
+$$\text{Var}(X) = \sigma^2 = E[(X - \mu)^2] = E[X^2] - (E[X])^2$$
+
+L'**écart-type** est la racine carrée:
+
+$$\sigma = \sqrt{\text{Var}(X)}$$
+
+**Exemple - Calcul de variance:**
+```
+Données: 5000, 5200, 4800, 5500, 4900 kWh
+Moyenne: μ = 5080
+
+Écarts: (5000-5080)², (5200-5080)², ...
+     = 6400, 14400, 78400, 177600, 32400
+
+Variance = (6400 + 14400 + 78400 + 177600 + 32400) / 5
+         = 309200 / 5
+         = 61840 kWh²
+
+Écart-type: σ = √61840 = 248.7 kWh
+```
+
+### Coefficient de Variation
+
+Mesure l'incertitude **relative** (en pourcentage):
+
+$$CV = \frac{\sigma}{\mu} \times 100\%$$
+
+**Exemple:**
+```
+Électricité:      σ=0.008, μ=0.042
+                  CV = 0.008/0.042 × 100% = 19%
+
+Gaz naturel:      σ=0.12, μ=1.96
+                  CV = 0.12/1.96 × 100% = 6.1%
+
+Interprétation: Électricité plus incertaine que gaz
+```
+
+### Distribution Normale des Facteurs d'Émission
+
+**Fonction de densité Normale:**
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+
+**Propriété 68-95-99.7:**
+```
+68% des valeurs:   μ ± 1σ
+95% des valeurs:   μ ± 2σ  
+99.7% des valeurs: μ ± 3σ
+```
+
+**Exemple électricité France 2024:**
+
+$$f(x) = \frac{1}{0.008\sqrt{2\pi}} \exp\left(-\frac{(x-0.042)^2}{2(0.008)^2}\right)$$
+
+**Paramètres estimés:**
+```
+Facteur moyen:        μ = 0.042 kg CO₂e/kWh
+Écart-type:           σ = 0.008 kg CO₂e/kWh (±19%)
+
+Fourchette 68% (1σ):  [0.034 ; 0.050] kg CO₂e/kWh
+Fourchette 95% (2σ):  [0.026 ; 0.058] kg CO₂e/kWh
+Fourchette 99.7% (3σ):[0.018 ; 0.066] kg CO₂e/kWh
+```
+
+**Interprétation:**
+- 68% chance que facteur réel soit entre 0.034-0.050
+- 95% chance que facteur réel soit entre 0.026-0.058
+- Seulement 5% que facteur sorte de [0.026 ; 0.058]
+
+### Z-Score et Standardisation
+
+Convertir une valeur en écarts-types à partir de la moyenne:
+
+$$Z = \frac{X - \mu}{\sigma}$$
+
+**Tableau Z (Probability Standard Normal):**
+```
+Z = 1.0  → P(X < μ+σ) = 84.1%
+Z = 1.96 → P(X < μ+1.96σ) = 97.5% (intervalle 95%)
+Z = 2.58 → P(X < μ+2.58σ) = 99.5% (intervalle 99%)
+Z = 3.0  → P(X < μ+3σ) = 99.85%
+```
+
+**Exemple:**
+```
+Électricité observée: 0.050 kg CO₂e/kWh
+Moyenne: 0.042
+Écart-type: 0.008
+
+Z = (0.050 - 0.042) / 0.008 = 1.0
+
+→ Cette valeur est à 1σ au-dessus de la moyenne
+→ Elle est dans les 84% de probabilité
+```
+
+### Probabilité Composée : Plusieurs Sources
+
+Quand plusieurs sources d'émission sont **indépendantes:**
+
+$$P(\text{Tous événements}) = P(E_1) \times P(E_2) \times P(E_3)$$
+
+**Exemple: PME avec 3 sources indépendantes**
+```
+Électricité (95% confiance):   P(E) = 0.95
+Gaz naturel (95% confiance):   P(G) = 0.95
+Déchets (95% confiance):       P(D) = 0.95
+
+P(Total valide) = 0.95 × 0.95 × 0.95 = 0.857 = 85.7%
+```
+
+**Interprétation:**
+- Chaque source a 95% de fiabilité
+- Avec 3 sources, confiance globale = 86%
+- Avec 5 sources: 0.95^5 = 77.4% ⚠️
+- Avec 10 sources: 0.95^10 = 59.9% ❌
+
+**Règle:** La certitude **diminue** quand on ajoute des sources!
+
+### Théorème de Bayes : Mise à Jour Probabiliste
+
+Quand on acquiert une **nouvelle mesure**, on met à jour nos croyances:
+
+$$P(H | D) = \frac{P(D | H) \times P(H)}{P(D)}$$
+
+**Où:**
+- $P(H|D)$ = Probabilité de l'hypothèse sachant les données (posterior)
+- $P(D|H)$ = Vraisemblance (likelihood) : probabilité d'observer D si H vraie
+- $P(H)$ = Probabilité initiale (prior)
+- $P(D)$ = Probabilité d'observer les données
+
+**Exemple - Émissions d'électricité:**
+
+```
+Hypothèse H: Facteur électricité = 0.042 kg CO₂e/kWh
+Prior P(H): Basé sur données historiques, P(H) = 0.8
+
+Données D: Mesure physique 1000 kWh → 44 kg CO₂e
+Vraisemblance: 44/1000 = 0.044 kg CO₂e/kWh (proche de 0.042)
+
+Si hypothèse vraie (0.042): P(D|H) = 0.95 (mesure proche)
+Si hypothèse fausse (0.050): P(D|H) = 0.40 (mesure moins probable)
+
+P(H|D) = (0.95 × 0.8) / P(D)
+       = (0.95 × 0.8) / [(0.95×0.8) + (0.40×0.2)]
+       = 0.76 / (0.76 + 0.08)
+       = 0.76 / 0.84
+       = 0.905 = 90.5%
+
+→ Après mesure, confiance augmente de 80% à 90.5% ✅
+```
+
+### Loi des Grands Nombres
+
+Plus on accumule de données, plus l'**estimateur converge** vers la vraie valeur:
+
+$$\lim_{n \to \infty} \bar{X}_n = \mu$$
+
+**En pratique - Nombre d'observations minimal:**
+
+```
+Précision désirée    Observations minimales
+────────────────────────────────────────────
+±10%                 ~30 mesures
+±5%                  ~120 mesures
+±2%                  ~750 mesures
+±1%                  ~3000 mesures
+```
+
+**Exemple - Électricité:**
+```
+Pour estimer facteur avec ±5% précision:
+- Besoin minimum: 120 mesures mensuelles
+- = 10 ans de données d'une installation
+- Marge de sécurité: utiliser 3-5 ans min
+
+Première année: σ = 0.010 (large)
+Cinquième année: σ = 0.004 (plus précis)
+```
+
+### Analyse d'Incertitude : Propagation des Erreurs
+
+Pour une formule composite qui multiplie plusieurs variables:
+
+$$\text{Émissions} = A \times F \times K$$
+
+L'erreur totale **relative** se propage par:
+
+$$\frac{\Delta E}{E} = \sqrt{\left(\frac{\Delta A}{A}\right)^2 + \left(\frac{\Delta F}{F}\right)^2 + \left(\frac{\Delta K}{K}\right)^2}$$
+
+**Formule générale (propagation quadratique):**
+
+$$\sigma_Y = \sqrt{\sum_{i} \left(\frac{\partial Y}{\partial x_i}\right)^2 \sigma_{x_i}^2}$$
+
+**Exemple 1: Voiture essence**
+```
+Consommation: 7 L/100 km (±10% incertitude → σ = 0.7 L)
+Facteur essence: 2.31 kg CO₂/L (±5% incertitude → σ = 0.115)
+Distance: 100 km (±1% → σ = 1 km)
+
+Formule: Émissions = (7/100) × 2.31 × 100 = 16.17 kg CO₂e
+
+Erreur relative:
+ΔE/E = √((0.10)² + (0.05)² + (0.01)²)
+     = √(0.0100 + 0.0025 + 0.0001)
+     = √0.0126
+     = 0.1122 = 11.22%
+
+Résultat final: 16.17 ± 1.82 kg CO₂e/100 km (±11.22%)
+```
+
+**Exemple 2: Consommation électrique d'usine**
+```
+Puissance machine: 50 kW (±3%)
+Heures fonctionnement: 8000 h/an (±5%)
+Facteur électricité: 0.042 kg CO₂/kWh (±8%)
+
+Consommation = 50 × 8000 = 400,000 kWh
+Émissions = 400,000 × 0.042 = 16,800 kg CO₂e
+
+Erreur relative:
+ΔE/E = √(0.03² + 0.05² + 0.08²)
+     = √(0.0009 + 0.0025 + 0.0064)
+     = √0.0098
+     = 0.099 = 9.9%
+
+Résultat: 16,800 ± 1,663 kg CO₂e/an (±9.9%)
+```
+
+**Cas critique - Incertitudes amplifiées:**
+```
+Activité: ±20%
+Facteur émission: ±15%
+Coefficient conversion: ±10%
+
+Erreur totale = √(0.20² + 0.15² + 0.10²)
+              = √(0.04 + 0.0225 + 0.01)
+              = √0.0725
+              = 0.269 = 26.9% ❌
+
+→ Intervalle de confiance très large!
+→ Nécessite améliorer la qualité des données
+```
+
+### Distribution Composée d'Émissions d'Entreprise
+
+Pour une entreprise avec **plusieurs activités indépendantes:**
+
+**Émissions totales:**
+$$E_{\text{total}} = \sum_i E_i$$
+
+**Variance totale (variabilité):**
+$$\sigma_{\text{total}}^2 = \sum_i \sigma_i^2$$
+
+**Écart-type total:**
+$$\sigma_{\text{total}} = \sqrt{\sum_i \sigma_i^2}$$
+
+**Exemple: PME avec 3 activités**
+```
+Source              Moyenne      Écart-type   CV (%)
+─────────────────────────────────────────────────────
+Électricité         50 tCO₂e     8 tCO₂e     16%
+Gaz naturel         30 tCO₂e     6 tCO₂e     20%
+Déchets             5 tCO₂e      1.5 tCO₂e   30%
+Transport           10 tCO₂e     3 tCO₂e     30%
+
+Émissions totales:
+μ_total = 50 + 30 + 5 + 10 = 95 tCO₂e
+
+Variance totale:
+σ_total² = 8² + 6² + 1.5² + 3² = 64 + 36 + 2.25 + 9 = 111.25
+
+Écart-type total:
+σ_total = √111.25 = 10.55 tCO₂e
+
+Coefficient variation global:
+CV = 10.55 / 95 = 11.1% (moins que chaque activité!)
+
+Intervalle 95%:
+IC = 95 ± 1.96 × 10.55 = 95 ± 20.68 = [74.3 ; 115.7] tCO₂e
+```
+
+**Insight:** La variabilité se **réduit** quand on agrège plusieurs sources! (Principe de diversification)
 
 $$P(\text{Émissions réelles} \in [\mu - \sigma, \mu + \sigma]) = 68.3\%$$
 
@@ -561,22 +891,145 @@ $$P(\text{Émissions réelles} \in [\mu - \sigma, \mu + \sigma]) = 68.3\%$$
 
 ### Distribution Normale des Facteurs d'Émission
 
-**Exemple électricité France 2024:**
+**Fonction de densité Normale:**
 
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+
+**Propriété 68-95-99.7:**
+```
+68% des valeurs:   μ ± 1σ
+95% des valeurs:   μ ± 2σ  
+99.7% des valeurs: μ ± 3σ
+```
+
+**Exemple électricité France 2024:**
+
+$$f(x) = \frac{1}{0.008\sqrt{2\pi}} \exp\left(-\frac{(x-0.042)^2}{2(0.008)^2}\right)$$
 
 **Paramètres estimés:**
 ```
 Facteur moyen:        μ = 0.042 kg CO₂e/kWh
 Écart-type:           σ = 0.008 kg CO₂e/kWh (±19%)
 
+Fourchette 68% (1σ):  [0.034 ; 0.050] kg CO₂e/kWh
 Fourchette 95% (2σ):  [0.026 ; 0.058] kg CO₂e/kWh
+Fourchette 99.7% (3σ):[0.018 ; 0.066] kg CO₂e/kWh
 ```
 
 **Interprétation:**
-- 68% des valeurs: 0.034 à 0.050 kg CO₂e/kWh
-- 95% des valeurs: 0.026 à 0.058 kg CO₂e/kWh
-- 99.7% des valeurs: 0.018 à 0.066 kg CO₂e/kWh
+- 68% chance que facteur réel soit entre 0.034-0.050
+- 95% chance que facteur réel soit entre 0.026-0.058
+- Seulement 5% que facteur sorte de [0.026 ; 0.058]
+
+### Z-Score et Standardisation
+
+Convertir une valeur en écarts-types à partir de la moyenne:
+
+$$Z = \frac{X - \mu}{\sigma}$$
+
+**Tableau Z (Probability Standard Normal):**
+```
+Z = 1.0  → P(X < μ+σ) = 84.1%
+Z = 1.96 → P(X < μ+1.96σ) = 97.5% (intervalle 95%)
+Z = 2.58 → P(X < μ+2.58σ) = 99.5% (intervalle 99%)
+Z = 3.0  → P(X < μ+3σ) = 99.85%
+```
+
+**Exemple:**
+```
+Électricité observée: 0.050 kg CO₂e/kWh
+Moyenne: 0.042
+Écart-type: 0.008
+
+Z = (0.050 - 0.042) / 0.008 = 1.0
+
+→ Cette valeur est à 1σ au-dessus de la moyenne
+→ Elle est dans les 84% de probabilité
+```
+
+### Probabilité Composée : Plusieurs Sources
+
+Quand plusieurs sources d'émission sont **indépendantes:**
+
+$$P(\text{Tous événements}) = P(E_1) \times P(E_2) \times P(E_3)$$
+
+**Exemple: PME avec 3 sources indépendantes**
+```
+Électricité (95% confiance):   P(E) = 0.95
+Gaz naturel (95% confiance):   P(G) = 0.95
+Déchets (95% confiance):       P(D) = 0.95
+
+P(Total valide) = 0.95 × 0.95 × 0.95 = 0.857 = 85.7%
+```
+
+**Interprétation:**
+- Chaque source a 95% de fiabilité
+- Avec 3 sources, confiance globale = 86%
+- Avec 5 sources: 0.95^5 = 77.4% ⚠️
+- Avec 10 sources: 0.95^10 = 59.9% ❌
+
+**Règle:** La certitude **diminue** quand on ajoute des sources!
+
+### Théorème de Bayes : Mise à Jour Probabiliste
+
+Quand on acquiert une **nouvelle mesure**, on met à jour nos croyances:
+
+$$P(H | D) = \frac{P(D | H) \times P(H)}{P(D)}$$
+
+**Où:**
+- $P(H|D)$ = Probabilité de l'hypothèse sachant les données (posterior)
+- $P(D|H)$ = Vraisemblance (likelihood) : probabilité d'observer D si H vraie
+- $P(H)$ = Probabilité initiale (prior)
+- $P(D)$ = Probabilité d'observer les données
+
+**Exemple - Émissions d'électricité:**
+
+```
+Hypothèse H: Facteur électricité = 0.042 kg CO₂e/kWh
+Prior P(H): Basé sur données historiques, P(H) = 0.8
+
+Données D: Mesure physique 1000 kWh → 44 kg CO₂e
+Vraisemblance: 44/1000 = 0.044 kg CO₂e/kWh (proche de 0.042)
+
+Si hypothèse vraie (0.042): P(D|H) = 0.95 (mesure proche)
+Si hypothèse fausse (0.050): P(D|H) = 0.40 (mesure moins probable)
+
+P(H|D) = (0.95 × 0.8) / P(D)
+       = (0.95 × 0.8) / [(0.95×0.8) + (0.40×0.2)]
+       = 0.76 / (0.76 + 0.08)
+       = 0.76 / 0.84
+       = 0.905 = 90.5%
+
+→ Après mesure, confiance augmente de 80% à 90.5% ✅
+```
+
+### Loi des Grands Nombres
+
+Plus on accumule de données, plus l'**estimateur converge** vers la vraie valeur:
+
+$$\lim_{n \to \infty} \bar{X}_n = \mu$$
+
+**En pratique - Nombre d'observations minimal:**
+
+```
+Précision désirée    Observations minimales
+────────────────────────────────────────────
+±10%                 ~30 mesures
+±5%                  ~120 mesures
+±2%                  ~750 mesures
+±1%                  ~3000 mesures
+```
+
+**Exemple - Électricité:**
+```
+Pour estimer facteur avec ±5% précision:
+- Besoin minimum: 120 mesures mensuelles
+- = 10 ans de données d'une installation
+- Marge de sécurité: utiliser 3-5 ans min
+
+Première année: σ = 0.010 (large)
+Cinquième année: σ = 0.004 (plus précis)
+```
 
 ### Probabilité Composée : Plusieurs Sources d'Émission
 
@@ -887,6 +1340,235 @@ Bon modèle:           Mauvais modèle:
 
 4. **Non-linéaire:** Polynôme ou spline
    $$Y = \beta_0 + \beta_1 X + \beta_2 X^2 + \beta_3 X^3$$
+
+### Corrélation et Covariance
+
+La **covariance** mesure le degré d'association entre deux variables:
+
+$$\text{Cov}(X,Y) = E[(X - \mu_X)(Y - \mu_Y)] = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$
+
+Le **coefficient de corrélation** normalise cette mesure:
+
+$$r = \frac{\text{Cov}(X,Y)}{\sigma_X \times \sigma_Y} = \frac{\sum(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum(x_i - \bar{x})^2} \times \sqrt{\sum(y_i - \bar{y})^2}}$$
+
+**Propriétés:**
+```
+r = 1.0    → Corrélation positive parfaite
+0 < r < 1  → Corrélation positive (plus X ↑, plus Y ↑)
+r = 0      → Pas de corrélation linéaire
+-1 < r < 0 → Corrélation négative (plus X ↑, moins Y ↓)
+r = -1.0   → Corrélation négative parfaite
+```
+
+**Interprétation pratique:**
+```
+|r| > 0.9  → Très forte corrélation ✅
+0.7 < |r| ≤ 0.9 → Forte corrélation
+0.5 < |r| ≤ 0.7 → Corrélation modérée
+0.3 < |r| ≤ 0.5 → Faible corrélation
+|r| ≤ 0.3  → Très faible ou pas corrélation ❌
+```
+
+**Exemple - Électricité vs Émissions:**
+```
+Données 24 mois:
+x = [5000, 5200, 4800, ..., 6100] kWh
+y = [210, 219, 202, ..., 257] kg CO₂e
+
+Cov(X,Y) = 80,500 kWh·kg
+σ_X = 487 kWh
+σ_Y = 17.2 kg CO₂e
+
+r = 80,500 / (487 × 17.2) = 0.961 ✅
+
+→ Très forte corrélation positive
+→ Plus consommation → Plus émissions (logique!)
+```
+
+**Relation: r² = R²**
+$$r^2 = R^2 = 0.961^2 = 0.924 = 92.4\%$$
+
+### Matrice de Corrélation (Régression Multiple)
+
+Pour plusieurs variables indépendantes (X₁, X₂, X₃...):
+
+$$\begin{pmatrix}
+1 & r_{12} & r_{13} & r_{1Y} \\
+r_{12} & 1 & r_{23} & r_{2Y} \\
+r_{13} & r_{23} & 1 & r_{3Y} \\
+r_{1Y} & r_{2Y} & r_{3Y} & 1
+\end{pmatrix}$$
+
+**Exemple - PME:**
+```
+Correlations entre variables:
+                Électricité   Gaz    Déchets  Émissions
+Électricité     1.00         0.34   0.12     0.92
+Gaz             0.34         1.00   0.45     0.88
+Déchets         0.12         0.45   1.00     0.65
+Émissions       0.92         0.88   0.65     1.00
+
+Observations:
+- Électricité et Émissions: r=0.92 (très forte)
+- Gaz et Émissions: r=0.88 (très forte)
+- Déchets et Émissions: r=0.65 (modérée)
+- Électricité et Gaz: r=0.34 (faible) → peu multicolinéaires ✅
+```
+
+### Multicolinéarité
+
+Problème: Deux variables indépendantes très corrélées
+
+$$\text{VIF} = \frac{1}{1 - R_k^2}$$
+
+Où $R_k^2$ = R² de la régression Xₖ vs autres X
+
+**Interprétation VIF:**
+```
+VIF < 5        → Acceptable ✅
+5 ≤ VIF < 10   → À investiguer ⚠️
+VIF ≥ 10       → Multicolinéarité problématique ❌
+```
+
+**Exemple:**
+```
+Si r(électricité, température) = 0.85
+R² = 0.72
+VIF = 1/(1-0.72) = 3.57 ✅ Acceptable
+
+Si r(électricité, employés) = 0.95
+R² = 0.90
+VIF = 1/(1-0.90) = 10.0 ❌ Problématique
+```
+
+### Analyse des Résidus (Diagnostic Avancé)
+
+Les **résidus** représentent l'écart entre réalité et prédiction:
+
+$$e_i = y_i - \hat{y}_i$$
+
+**Propriétés résidus normaux:**
+```
+1. Moyenne ≈ 0:           E[e] = 0 ✓
+2. Variance constante:    Var(e) = σ² (homoscédasticité)
+3. Distribution normale:  e ~ N(0, σ²)
+4. Indépendance:          Corr(eᵢ, eⱼ) = 0 si i ≠ j
+```
+
+**Test de normalité - Kolmogorov-Smirnov:**
+
+$$D = \max|F_n(x) - F(x)|$$
+
+Où $F_n$ = fonction distribution empirique, $F$ = distribution théorique
+
+Si p-value > 0.05 → Résidus normaux ✅
+
+**Test d'homoscédasticité - Breusch-Pagan:**
+
+$$\text{Var}(e) = \alpha_0 + \alpha_1 X_1 + \alpha_2 X_2 + ...$$
+
+Si relation significative → Hétéroscédasticité ❌
+
+**Test d'indépendance - Durbin-Watson:**
+
+$$DW = \frac{\sum_{i=2}^{n} (e_i - e_{i-1})^2}{\sum_{i=1}^{n} e_i^2}$$
+
+**Interprétation:**
+```
+DW ≈ 2    → Pas d'autocorrélation ✅
+DW < 2    → Autocorrélation positive ❌
+DW > 2    → Autocorrélation négative ❌
+DW ∈ [1.5, 2.5] → Zone acceptable
+```
+
+### Prédiction vs Interpolation vs Extrapolation
+
+**Définitions:**
+
+1. **Interpolation:** Prédire à l'intérieur du range des données ✅
+   - Fiable et peu d'erreur
+   - Exemple: Prévoir juin quand données = jan-dec
+
+2. **Extrapolation:** Prédire en dehors du range ⚠️
+   - Moins fiable, plus d'erreur
+   - Exemple: Prévoir janvier année suivante
+
+3. **Exrapolation extrême:** Très loin du range ❌
+   - Non recommandée
+   - Exemple: Prédire année +10
+
+**Formule d'incertitude (intervalle de prédiction):**
+
+Plus on s'éloigne de $\bar{X}$, plus incertitude augmente:
+
+$$SE(\hat{Y}) = s \sqrt{1 + \frac{1}{n} + \frac{(X_{\text{nouveau}} - \bar{X})^2}{\sum(X_i - \bar{X})^2}}$$
+
+**Graphique:**
+```
+Largeur intervalle confiance vs X:
+
+        │
+        │      /│ ╲
+        │     / │  ╲    ← Intervalle 95%
+        │    /  │   ╲
+        │───────────────  ← Prédiction point
+        │  /    │    ╲
+        │ /     │     ╲
+        │/      │      ╲
+        └─────────────────
+         Données    Extrapolation
+         (fiable)   (incertain)
+```
+
+### Sélection de Variables (Feature Selection)
+
+Pour régression multiple, comment choisir les meilleures variables?
+
+**Méthode 1: Pas à pas avant (Forward Selection)**
+```
+Étape 1: Ajouter variable avec meilleur r avec Y
+Étape 2: Ajouter variable qui améliore le plus R²
+Étape 3: Continuer jusqu'à pas d'amélioration significative
+```
+
+**Méthode 2: Pas à pas arrière (Backward Elimination)**
+```
+Étape 1: Démarrer avec toutes les variables
+Étape 2: Enlever variable avec plus faible t-stat
+Étape 3: Continuer jusqu'à toutes variables significatives
+```
+
+**Critère AIC (Akaike Information Criterion):**
+
+$$\text{AIC} = 2p + n \ln\left(\frac{\text{RSS}}{n}\right)$$
+
+Où $p$ = nombre paramètres, RSS = résidual sum squares
+
+**Critère BIC (Bayesian Information Criterion):**
+
+$$\text{BIC} = p \ln(n) + n \ln\left(\frac{\text{RSS}}{n}\right)$$
+
+**Principe:** Plus AIC/BIC bas, meilleur le modèle ✅
+
+### Régression Logistique (Classification)
+
+Quand Y est binaire (0/1) plutôt que continu:
+
+$$P(Y=1) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}$$
+
+Ou en logits:
+$$\ln\left(\frac{P}{1-P}\right) = \beta_0 + \beta_1 X$$
+
+**Exemple - Prédiction dépassement seuil:**
+```
+Y = 1 si émissions > 100 tCO₂e/an (dépasser seuil)
+Y = 0 si émissions < 100 tCO₂e/an (en-dessous)
+
+Modèle: P(Dépasser) = f(électricité, gaz, activité)
+
+Si P(Dépasser) = 0.75 → 75% probabilité dépassement
+→ Entreprise doit réduire ses émissions de 75% pour sûrement rester en-dessous
+```
 
 ---
 
