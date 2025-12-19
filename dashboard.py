@@ -19,7 +19,7 @@ from pfe_project.calculator import CarbonFootprintCalculator
 
 # Configuration de la page
 st.set_page_config(
-    page_title="Évaluation Carbone - Investissements",
+    page_title="Khalil Évaluation Carbone - Investissements",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded",
