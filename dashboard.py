@@ -19,7 +19,7 @@ from pfe_project.calculator import CarbonFootprintCalculator
 
 # Configuration de la page
 st.set_page_config(
-    page_title="Khalil Évaluation Carbone - Investissements",
+    page_title="Khalil Évaluation Carbone -Investissements",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -130,7 +130,7 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🔥 Portée 1 - Émissions Directes")
+          st.subheader("🔥 Portée 1 - Émissions Directes")
         
         with st.expander("Combustibles Fossiles", expanded=True):
             col_f1, col_f2, col_f3 = st.columns(3)
