@@ -117,7 +117,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ============================================================================
-# TAB 1 - Saisie des Données
+# TAB - Saisie des Données
 # ============================================================================
 with tab1:
     st.header("Saisie des Données d'Émissions")
